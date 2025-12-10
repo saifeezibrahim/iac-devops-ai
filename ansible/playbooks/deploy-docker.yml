@@ -1,0 +1,70 @@
+- name: Deploy application
+  hosts: "{{ target_host }}"
+  vars:
+    repo_path: "/home/mafyuh/iac/docker/{{ folder }}"
+    secrets_mapping_file: "/home/mafyuh/iac/docker/secret-mappings.yml"
+  tasks:
+    - name: Ensure the repository is up-to-date
+      ansible.builtin.shell: git pull
+      args:
+        chdir: "{{ repo_path }}"
+      register: git_pull_output
+
+    - name: Display git pull output
+      ansible.builtin.debug:
+        var: git_pull_output.stdout_lines
+
+    - name: Read secret mapping
+      ansible.builtin.slurp:
+        src: "{{ secrets_mapping_file }}"
+      register: secret_mapping_content
+
+    - name: Parse secret mapping
+      ansible.builtin.set_fact:
+        secret_mapping: "{{ secret_mapping_content['content'] | b64decode | from_yaml }}"
+
+    - name: Set env_variables
+      ansible.builtin.set_fact:
+        env_variables: "{{ secret_mapping[target_host]['env_variables'] | default({}) }}"
+
+    - name: Lookup secrets on the control machine
+      ansible.builtin.shell: "bws secret get {{ item }} | jq -r '.value'"
+      loop: "{{ env_variables.values() }}"
+      register: bw_secret_output
+      delegate_to: localhost
+
+    - name: Set env variables with secrets
+      ansible.builtin.set_fact:
+        env_variables_with_secrets: |
+          HOST={{ ansible_hostname }}
+          {% for key, secret in env_variables.keys() | zip(bw_secret_output.results) %}
+          {{ key }}={{ secret.stdout }}
+          {% endfor %}
+
+    - name: Backup existing .env file if exists
+      ansible.builtin.shell: |
+        if [ -f .env ]; then cp .env .env.bak.$(date +%Y-%m-%d-%H-%M-%S); fi
+      args:
+        chdir: "{{ repo_path }}"
+      ignore_errors: true
+
+    - name: Write .env file to target host
+      ansible.builtin.copy:
+        dest: "{{ repo_path }}/.env"
+        content: "{{ env_variables_with_secrets }}"
+
+    - name: Restart services using Docker Compose
+      community.docker.docker_compose_v2:
+        project_src: "{{ repo_path }}"
+        state: present
+        remove_orphans: true
+
+    - name: Run Docker Command
+      command: docker compose ps
+      args:
+        chdir: "{{ repo_path }}"
+      register: docker_output
+
+    - name: Display Docker Output
+      debug:
+        var: docker_output.stdout_lines
