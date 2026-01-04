@@ -1,0 +1,17 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/compose-spec/compose-spec/master/schema/compose-spec.json
+services:
+  kasm:
+    image: ghcr.io/linuxserver/kasm@sha256:REDACTED
+    container_name: kasm
+    privileged: true
+    environment:
+      - KASM_PORT=443
+      - DOCKER_HUB_USERNAME=$DOCKER_HUB_USERNAME
+      - DOCKER_HUB_PASSWORD=$DOCKER_HUB_PASSWORD
+    volumes:
+      - /docker/appdata/kasm2:/opt
+    ports:
+      - 3000:3000
+      - 443:443
+    restart: unless-stopped
