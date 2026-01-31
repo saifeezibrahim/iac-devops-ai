@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.29.0-standalone-strict/configmap-v1.json
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: website-monitoring-targets
+  namespace: monitoring
+data:
+  targets.yml: ENC[AES256_GCM,data:lSYB+ogQZWE5D/+REDACTED/REDACTED/ykUReefYWwj/34rEUQ/REDACTED/5oOler+4=,iv:2mn5Xa2K4U4KjcIKwzB3OfA8IdFaAy/zk1X5CXpCOXg=,tag:ckRxKKL1GdW3Rx+A4O4l6g==,type:str]
+sops:
+  age:
+    - recipient: REDACTED
+      enc: |
+        REDACTED_PRIVATE_KEY
+  lastmodified: "2025-12-12T03:45:04Z"
+  mac: ENC[AES256_GCM,data:BYqanb3qkjs9t8mGPdbl+dXrWEzA73NVv4whQqUNus2UBo+qO1ihVPzDqfagqBjMUMRXj7qqZXg3V3/7sn/REDACTED+7g4GeQwyPoVICvP2HO+qSXk=,iv:7FwtkTftcvwjLkNzpwTIbZ+A51YeRQXtHjm47Sab5Ig=,tag:A+C+9eXSc1/CzFImk80OYA==,type:str]
+  encrypted_regex: ^(data|stringData)$
+  version: 3.11.0

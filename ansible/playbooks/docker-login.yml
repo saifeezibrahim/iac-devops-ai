@@ -1,0 +1,10 @@
+- name: Docker Login
+  hosts: "*"
+  become: false
+  vars:
+    docker_password: "{{ lookup('bitwarden.secrets.lookup', 'REDACTED', access_token=bw_access_token) }}"
+  tasks:
+    - name: Log into DockerHub
+      community.docker.docker_login:
+        username: mafyuh
+        password: "{{ docker_password }}"
