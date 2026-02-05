@@ -1,0 +1,13 @@
+{
+  "servers": {
+    "flux-operator-mcp": {
+      "type": "http",
+      "url": "https://flux-mcp.local.mafyuh.dev/mcp"
+    },
+    "MCP_DOCKER": {
+      "command": "docker",
+      "args": ["mcp", "gateway", "run"],
+      "type": "stdio"
+    }
+  }
+}

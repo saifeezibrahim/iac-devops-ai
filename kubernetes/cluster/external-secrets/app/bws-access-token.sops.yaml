@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: bws-access-token
+  namespace: security
+type: Opaque
+data:
+  token: ENC[AES256_GCM,data:YtWfQKym2jQp/REDACTED/REDACTED++Ms8YhyZYWv1sM=,iv:REDACTED/+s78V7UIqw=,tag:Dy8dRJ2KOSGy9ReC0YtaAg==,type:str]
+sops:
+  age:
+    - recipient: REDACTED
+      enc: |
+        REDACTED_PRIVATE_KEY
+  lastmodified: "2025-10-09T05:33:34Z"
+  mac: ENC[AES256_GCM,data:AC8vz+yFMN2+REDACTED/REDACTED/sNBYLfV9JynQM1jVUZ+z0p8=,iv:REDACTED=,tag:ngYvPS2BGibpS04nuhsHuA==,type:str]
+  encrypted_regex: ^(data|stringData)$
+  version: 3.10.2
